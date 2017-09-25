@@ -1,0 +1,15 @@
+{
+  "name": "reversepolishnotation",
+  "version": "1.0.0",
+  "description": "Implement a RPN calculator",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node calculator.js"
+  },
+  "author": "Sayan Mukherjee",
+  "license": "MIT",
+  "dependencies": {
+    "readline-sync": "^1.4.7"
+  }
+}
