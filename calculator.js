@@ -1,6 +1,6 @@
 let readline = require("readline-sync");
+const operators = ['+', '-', '*', '/', '(', ')'];
 let evaluationStack = [], postfixQueue = [];
-let operators = ['+', '-', '*', '/', '(', ')'];
 
 let initCalculator = function () {
     getUserInput();
@@ -8,15 +8,16 @@ let initCalculator = function () {
 
 let getUserInput = function () {
     var inputExpression = readline.question("Please enter a valid infix expression: ");
-    if (inputExpression === "quit") {
+    if (inputExpression.toLocaleLowerCase() === "quit") {
         return;
     } else {
         // convert to postfix
         let infixExpression = inputExpression.replace(/\s+/g,' ').trim(); // get rid of extra whitespaces, ref: https://stackoverflow.com/a/16974697/1705383
         if (createValidExpression(infixExpression)) {
             console.log("Postfix: ", postfixQueue);
-            console.log("Value: ", evaluatePostfixExpression());
+            console.log("Result: ", evaluatePostfixExpression());
         }
+        getUserInput();
     }
 };
 
