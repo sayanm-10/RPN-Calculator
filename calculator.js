@@ -49,7 +49,8 @@ let createInfixQueue = function (expression) {
 /*
     Function takes 2 operators as arguement
     Returns true if precedence of operator1
-    is less than or equal to operator2
+    is less than or equal to operator2,
+    otherwise false
 */
 let checkOperatorPrecedence = function (operator1, operator2) {
     let op1_weight = operatorPrecedence[operator1];
@@ -70,8 +71,10 @@ let convertInfixToPostfix = function () {
         } else if (operatorStack.length === 0 || token === "(") {
             operatorStack.unshift(token);
         } else if (token === ")") {
-            let left_paren_position = operatorStack.indexOf("("); // finds the earliest presence of left paren
-            operatorStack.splice(left_paren_position, 1);
+            while (operatorStack[0] !== "(") {
+                postfixQueue.push(operatorStack.shift());
+            }
+            operatorStack.shift();
         } else {
             while (operatorStack.length > 0 && operatorStack[0] !== "(" && checkOperatorPrecedence(token, operatorStack[0])) {
                 postfixQueue.push(operatorStack.shift());
