@@ -19,7 +19,7 @@ let getUserInput = function () {
             console.log("InfixQ: ", infixQueue);
             convertInfixToPostfix();
             console.log("PostfixQ: ", postfixQueue);
-            //console.log("Result: ", evaluatePostfixExpression());
+            console.log("Result: ", evaluatePostfixExpression());
         }
         getUserInput();
     }
@@ -30,12 +30,12 @@ let createInfixQueue = function (expression) {
     for (let i = 0; i < expression.length; i++) {
         if (!isNaN(expression[i]) || expression[i] === " " || operators.indexOf(expression[i]) > -1) {
             number = (expression[i] === " " || operators.indexOf(expression[i]) > -1)  ? number : number + expression[i];
-            if (expression[i] === " " || i === expression.length - 1) {
-                number.length > 0 ? infixQueue.push(number) : undefined;
-                number = '';
-            } else if (operators.indexOf(expression[i]) > -1) {
+             if (operators.indexOf(expression[i]) > -1) { // operators get moved straightaway
                 number.length > 0 ? infixQueue.push(number) : undefined;
                 infixQueue.push(expression[i]);
+                number = '';
+            } else if (expression[i] === " " || i === expression.length - 1) { // numbers delimited by space
+                number.length > 0 ? infixQueue.push(number) : undefined;
                 number = '';
             }
         } else {
@@ -43,6 +43,7 @@ let createInfixQueue = function (expression) {
             return false;
         }
     }
+
     return true;
 };
 
@@ -94,11 +95,11 @@ let evaluatePostfixExpression = function () {
     let token;
     while (postfixQueue.length > 0) {
         token = postfixQueue.shift();
-        console.log("postQ: ", postfixQueue);
+        //console.log("postQ: ", postfixQueue);
 
         if (!isNaN(token)) { // token is a number (operand)
             evaluationStack.unshift(token);
-            console.log("eval: ", evaluationStack);
+            //console.log("eval: ", evaluationStack);
         } else { // token is an operator
             let firstNumber = evaluationStack.shift();
             let secondNumber = evaluationStack.shift();
@@ -116,7 +117,7 @@ let evaluatePostfixExpression = function () {
             }
 
             evaluationStack.unshift(answer);
-            console.log("eval: ", evaluationStack);            
+            //console.log("eval: ", evaluationStack);            
         }
     }
 
