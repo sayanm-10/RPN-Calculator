@@ -1,6 +1,7 @@
 let readline = require("readline-sync");
 const operators = ['+', '-', '*', '/', '(', ')'];
-let evaluationStack = [], postfixQueue = [];
+const operatorPrecedence = {'+' : 1, '-' : 1, '*' : 2, '/' : 2};
+let evaluationStack = [], postfixQueue = [], infixQueue = [], operatorStack = [];
 
 let initCalculator = function () {
     getUserInput();
@@ -12,26 +13,29 @@ let getUserInput = function () {
         return;
     } else {
         // convert to postfix
+        evaluationStack = [], postfixQueue = [], infixQueue = [], operatorStack = [];
         let infixExpression = inputExpression.replace(/\s+/g,' ').trim(); // get rid of extra whitespaces, ref: https://stackoverflow.com/a/16974697/1705383
-        if (createValidExpression(infixExpression)) {
-            console.log("Postfix: ", postfixQueue);
-            console.log("Result: ", evaluatePostfixExpression());
+        if (createInfixQueue(infixExpression)) {
+            console.log("InfixQ: ", infixQueue);
+            convertInfixToPostfix();
+            console.log("PostfixQ: ", postfixQueue);
+            //console.log("Result: ", evaluatePostfixExpression());
         }
         getUserInput();
     }
 };
 
-let createValidExpression = function (expression) {
+let createInfixQueue = function (expression) {
     let number = '';
     for (let i = 0; i < expression.length; i++) {
         if (!isNaN(expression[i]) || expression[i] === " " || operators.indexOf(expression[i]) > -1) {
             number = (expression[i] === " " || operators.indexOf(expression[i]) > -1)  ? number : number + expression[i];
-            if (expression[i] === " ") {
-                number.length > 0 ? postfixQueue.push(number) : undefined;
+            if (expression[i] === " " || i === expression.length - 1) {
+                number.length > 0 ? infixQueue.push(number) : undefined;
                 number = '';
             } else if (operators.indexOf(expression[i]) > -1) {
-                number.length > 0 ? postfixQueue.push(number) : undefined;
-                postfixQueue.push(expression[i]);
+                number.length > 0 ? infixQueue.push(number) : undefined;
+                infixQueue.push(expression[i]);
                 number = '';
             }
         } else {
@@ -40,6 +44,47 @@ let createValidExpression = function (expression) {
         }
     }
     return true;
+};
+
+/*
+    Function takes 2 operators as arguement
+    Returns true if precedence of operator1
+    is less than or equal to operator2
+*/
+let checkOperatorPrecedence = function (operator1, operator2) {
+    let op1_weight = operatorPrecedence[operator1];
+    let op2_weight = operatorPrecedence[operator2];
+    
+    return (op1_weight <= op2_weight);
+};
+
+let convertInfixToPostfix = function () {
+    let token;
+    while (infixQueue.length > 0) {
+        token = infixQueue.shift();
+       // console.log("Token: ", token);
+
+        if (!isNaN(token)) { // token is a number
+            postfixQueue.push(token);
+            //console.log("postQ: ", postfixQueue);
+        } else if (operatorStack.length === 0 || token === "(") {
+            operatorStack.unshift(token);
+        } else if (token === ")") {
+            let left_paren_position = operatorStack.indexOf("("); // finds the earliest presence of left paren
+            operatorStack.splice(left_paren_position, 1);
+        } else {
+            while (operatorStack.length > 0 && operatorStack[0] !== "(" && checkOperatorPrecedence(token, operatorStack[0])) {
+                postfixQueue.push(operatorStack.shift());
+            }
+
+            operatorStack.unshift(token);
+        }
+    }
+
+    //  transfer remaining operators
+    while (operatorStack.length > 0) { 
+        postfixQueue.push(operatorStack.shift());        
+    }
 };
 
 let evaluatePostfixExpression = function () {
