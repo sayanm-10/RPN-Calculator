@@ -25,6 +25,11 @@ let getUserInput = function () {
     }
 };
 
+/*
+    Function reads user input char by char
+    and creates an infix queue out of the 
+    input expression
+*/
 let createInfixQueue = function (expression) {
     let number = '';
     for (let i = 0; i < expression.length; i++) {
@@ -60,6 +65,11 @@ let checkOperatorPrecedenceMap = function (operator1, operator2) {
     return (op1_weight <= op2_weight);
 };
 
+/*
+    Function implements the pseudo code
+    to convert an infix expression to
+    postfix.
+*/
 let convertInfixToPostfix = function () {
     let token;
     while (infixQueue.length > 0) {
@@ -91,6 +101,11 @@ let convertInfixToPostfix = function () {
     }
 };
 
+/*
+    Function calculates the result
+    by implementing the pseudo code on the
+    postfix expression queue.
+*/
 let evaluatePostfixExpression = function () {
     let token;
     while (postfixQueue.length > 0) {
