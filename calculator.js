@@ -1,7 +1,7 @@
 let readline = require("readline-sync");
 const operators = ['+', '-', '*', '/', '(', ')'];
 const operatorPrecedence = {'+' : 1, '-' : 1, '*' : 2, '/' : 2};
-let evaluationStack = [], postfixQueue = [], infixQueue = [], operatorStack = [];
+let evaluationStack = [], postfixQueue = [], infixQueue = [], operatorStack = []; // localize arrays
 
 let initCalculator = function () {
     getUserInput();
@@ -16,9 +16,9 @@ let getUserInput = function () {
         evaluationStack = [], postfixQueue = [], infixQueue = [], operatorStack = [];
         let infixExpression = inputExpression.replace(/\s+/g,' ').trim(); // get rid of extra whitespaces, ref: https://stackoverflow.com/a/16974697/1705383
         if (createInfixQueue(infixExpression)) {
-            console.log("InfixQ: ", infixQueue);
+            console.log("Infix Expression: ", infixQueue.join(" "));
             convertInfixToPostfix();
-            console.log("PostfixQ: ", postfixQueue);
+            console.log("Postfix Expression: ", postfixQueue.join(" "));
             console.log("Result: ", evaluatePostfixExpression());
         }
         getUserInput();
@@ -28,7 +28,7 @@ let getUserInput = function () {
 let createInfixQueue = function (expression) {
     let number = '';
     for (let i = 0; i < expression.length; i++) {
-        if (!isNaN(expression[i]) || expression[i] === " " || operators.indexOf(expression[i]) > -1) {
+        if (!isNaN(expression[i]) || expression[i] === " " || operators.indexOf(expression[i]) > -1 || expression[i] === ".") {
             number = (expression[i] === " " || operators.indexOf(expression[i]) > -1)  ? number : number + expression[i];
              if (operators.indexOf(expression[i]) > -1) { // operators get moved straightaway
                 number.length > 0 ? infixQueue.push(number) : undefined;
@@ -117,7 +117,7 @@ let evaluatePostfixExpression = function () {
             }
 
             evaluationStack.unshift(answer);
-            //console.log("eval: ", evaluationStack);            
+            //console.log("eval: ", evaluationStack);
         }
     }
 
